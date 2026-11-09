@@ -83,7 +83,7 @@
                 linear-gradient(145deg, #132b49, #09182b 72%);
             background-size: 160px 160px, cover, cover, cover;
             background-blend-mode: soft-light, screen, screen, normal;
-            transition: opacity .45s ease, visibility .45s ease;
+            transition: transform 5s cubic-bezier(.65, 0, .35, 1);
         }
         .cover-screen::before {
             position: absolute;
@@ -92,7 +92,7 @@
             content: '';
             pointer-events: none;
         }
-        .cover-screen.is-opening { opacity: 0; visibility: hidden; pointer-events: none; }
+        .cover-screen.is-opening { transform: translateY(-100%); pointer-events: none; }
         .cover-copy {
             position: relative;
             display: grid;
@@ -882,13 +882,16 @@
         function openInvitation() {
             const coverContainer = document.getElementById('coverContainer');
             const bgMusic = document.getElementById('bgMusic');
+            if (coverContainer.classList.contains('is-opening')) return;
+
             invitationApp.classList.add('is-visible');
             appHeader.classList.add('is-visible');
             musicToggle.classList.add('is-visible');
             readingCue.hidden = false;
             readingCue.classList.add('is-visible');
-            coverContainer.classList.add('is-opening');
             bgMusic.play().catch(error => console.error('Musik undangan tidak dapat diputar.', error));
+            const coverTransitionDuration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 5000;
+            coverContainer.classList.add('is-opening');
 
             setTimeout(() => {
                 coverContainer.style.display = 'none';
@@ -896,7 +899,7 @@
                 updateFocusedPanel();
                 updateReadingProgress();
                 startAutoScroll();
-            }, 450);
+            }, coverTransitionDuration);
         }
 
         // Toggle Audio Play/Pause
