@@ -861,14 +861,7 @@
         }
 
         function pauseAutoScroll() {
-            autoScrollPausedUntil = performance.now() + 6000;
-            lastAutoScrollTime = 0;
-            autoScrollRemainder = 0;
-        }
-
-        function resumeAutoScroll() {
-            if (!autoScrollEnabled) return;
-            autoScrollPausedUntil = 0;
+            autoScrollPausedUntil = performance.now() + 10000;
             lastAutoScrollTime = 0;
             autoScrollRemainder = 0;
         }
@@ -884,11 +877,7 @@
 
         window.addEventListener('wheel', pauseAutoScroll, { passive: true });
         window.addEventListener('touchstart', pauseAutoScroll, { passive: true });
-        window.addEventListener('touchend', resumeAutoScroll, { passive: true });
-        window.addEventListener('touchcancel', resumeAutoScroll, { passive: true });
         window.addEventListener('pointerdown', pauseAutoScroll, { passive: true });
-        window.addEventListener('pointerup', resumeAutoScroll, { passive: true });
-        window.addEventListener('pointercancel', resumeAutoScroll, { passive: true });
         window.addEventListener('keydown', event => {
             if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(event.key)) {
                 pauseAutoScroll();
