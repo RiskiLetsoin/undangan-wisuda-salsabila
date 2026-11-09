@@ -407,6 +407,18 @@
         .countdown-value { color: #fff !important; font-size: clamp(.9rem, 2.5vw, 1.05rem); font-variant-numeric: tabular-nums; font-weight: 700; line-height: 1.1; }
         .countdown-label { margin-top: 5px; color: var(--acid-green) !important; font-size: .5rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
         .countdown-status { min-height: 1.5em; margin: 8px 0 0; color: var(--soft-lavender) !important; font-size: .82rem; text-align: center; }
+        .rsvp-content { width: min(100%, 520px); margin: 0 auto; text-align: center; }
+        .rsvp-content h2 { margin-bottom: 8px; }
+        .rsvp-prompt { margin: 0; color: var(--soft-lavender) !important; font-size: .95rem; }
+        .rsvp-actions { display: grid; grid-template-columns: 1fr 1fr; margin-top: 20px; gap: 10px; }
+        .rsvp-button { min-height: 48px; padding: 10px 14px; border: 1px solid rgba(182, 166, 255, .4); border-radius: 7px; background: rgba(3, 7, 18, .32); color: var(--ink) !important; cursor: pointer; font-size: .9rem; font-weight: 600; transition: border-color .2s ease, background .2s ease, transform .2s ease; }
+        .rsvp-button:hover, .rsvp-button.is-selected { transform: translateY(-1px); border-color: var(--acid-green); background: rgba(74, 131, 255, .2); }
+        .rsvp-stats { display: grid; grid-template-columns: 1fr 1fr; margin-top: 22px; gap: 10px; }
+        .rsvp-stat { display: grid; min-height: 82px; padding: 12px; align-content: center; gap: 4px; border: 1px solid rgba(182, 166, 255, .32); border-radius: 8px; background: rgba(3, 7, 18, .24); }
+        .rsvp-stat-value { color: #fff !important; font-size: 1.3rem; font-variant-numeric: tabular-nums; font-weight: 700; }
+        .rsvp-stat-label { color: var(--soft-lavender) !important; font-size: .72rem; font-weight: 600; }
+        .rsvp-status { min-height: 1.5em; margin: 12px 0 0; color: var(--acid-green) !important; font-size: .78rem; }
+        .rsvp-note { margin: 10px 0 0; color: var(--soft-lavender) !important; font-size: .68rem; line-height: 1.5; }
         .event-photo { position: relative; height: 240px; margin-top: 14px; overflow: hidden; border: 1px solid rgba(182, 166, 255, .34); border-radius: 8px; background: var(--navy-deep); }
         .event-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 42%; }
         .event-photo::after { position: absolute; inset: 30% 0 0; background: linear-gradient(180deg, transparent, rgba(7, 17, 33, .72)); content: ''; pointer-events: none; }
@@ -475,6 +487,9 @@
             .countdown { gap: 5px; margin-top: 12px; }
             .countdown-item { min-height: 62px; padding-inline: 3px; }
             .countdown-label { font-size: .54rem; }
+            .rsvp-actions { gap: 7px; }
+            .rsvp-button { padding-inline: 8px; font-size: .82rem; }
+            .rsvp-stat { min-height: 72px; padding: 9px; }
             .event-photo { height: 210px; margin-top: 11px; }
             .map-direction { min-height: 68px; margin-top: 11px; padding: 10px 12px; }
         }
@@ -622,6 +637,26 @@
                 </div>
             </section>
 
+            <section id="rsvpScreen" class="screen-panel" aria-labelledby="rsvpTitle" aria-hidden="true" inert>
+                <span class="mini-flower mini-flower--left" aria-hidden="true"></span>
+                <span class="mini-flower mini-flower--right" aria-hidden="true"></span>
+                <div class="rsvp-content">
+                    <p class="section-kicker">Konfirmasi Kehadiran</p>
+                    <h2 id="rsvpTitle">Apakah Anda dapat hadir?</h2>
+                    <p class="rsvp-prompt">Pilih jawaban untuk mencatat konfirmasi Anda.</p>
+                    <div class="rsvp-actions">
+                        <button id="rsvpYes" class="rsvp-button" type="button" aria-pressed="false">Insyaallah Hadir</button>
+                        <button id="rsvpNo" class="rsvp-button" type="button" aria-pressed="false">Tidak Dapat Hadir</button>
+                    </div>
+                    <div class="rsvp-stats" aria-label="Statistik konfirmasi di browser ini">
+                        <div class="rsvp-stat"><span id="rsvpAttendingCount" class="rsvp-stat-value">0</span><span class="rsvp-stat-label">Hadir</span></div>
+                        <div class="rsvp-stat"><span id="rsvpDeclinedCount" class="rsvp-stat-value">0</span><span class="rsvp-stat-label">Tidak hadir</span></div>
+                    </div>
+                    <p id="rsvpStatus" class="rsvp-status" role="status" aria-live="polite"></p>
+                    <p class="rsvp-note">Statistik ini hanya tersimpan di browser/perangkat ini dan tidak digabung dengan jawaban dari perangkat lain.</p>
+                </div>
+            </section>
+
             <section id="socialsScreen" class="screen-panel" aria-labelledby="socialsTitle" aria-hidden="true" inert>
                 <span class="mini-flower mini-flower--left" aria-hidden="true"></span>
                 <span class="mini-flower mini-flower--right" aria-hidden="true"></span>
@@ -645,7 +680,7 @@
             </section>
     </main>
     <div id="readingCue" class="reading-cue" aria-live="off" hidden>
-        <span id="readingCueIndex" class="reading-cue-index">01 / 04</span>
+        <span id="readingCueIndex" class="reading-cue-index">01 / 05</span>
     </div>
 
     <!-- JS SCRIPT LOGIC -->
@@ -662,6 +697,77 @@
             document.getElementById('guestNameCover').textContent = guestName;
             document.getElementById('guestNameCover').classList.toggle('is-long', guestName.trim().length > 24);
         }
+
+        const rsvpStorageKey = 'salsabila-invitation-rsvp';
+        const rsvpStatus = document.getElementById('rsvpStatus');
+        const rsvpVisitorKeyStorage = 'salsabila-invitation-rsvp-visitor';
+        let currentRsvpKey;
+        try {
+            if (guestName && guestName.trim()) {
+                currentRsvpKey = `guest:${guestName.trim().toLocaleLowerCase('id-ID')}`;
+            } else {
+                let visitorKey = localStorage.getItem(rsvpVisitorKeyStorage);
+                if (!visitorKey) {
+                    visitorKey = `visitor:${Date.now()}-${Math.random().toString(36).slice(2)}`;
+                    localStorage.setItem(rsvpVisitorKeyStorage, visitorKey);
+                }
+                currentRsvpKey = visitorKey;
+            }
+        } catch (error) {
+            console.error('Identitas RSVP tidak dapat disiapkan.', error);
+            currentRsvpKey = `session:${Date.now()}-${Math.random().toString(36).slice(2)}`;
+            rsvpStatus.textContent = 'Penyimpanan browser tidak tersedia; jawaban hanya berlaku selama halaman ini dibuka.';
+        }
+
+        let rsvpResponses = {};
+
+        try {
+            const storedResponses = JSON.parse(localStorage.getItem(rsvpStorageKey) || '{}');
+            if (storedResponses && typeof storedResponses === 'object' && !Array.isArray(storedResponses)) {
+                rsvpResponses = Object.fromEntries(
+                    Object.entries(storedResponses).filter(([, response]) => response === 'yes' || response === 'no')
+                );
+            }
+        } catch (error) {
+            console.error('Statistik RSVP tidak dapat dibaca.', error);
+            rsvpStatus.textContent = 'Statistik RSVP yang tersimpan tidak dapat dibaca di browser ini.';
+        }
+
+        function renderRsvp() {
+            const answers = Object.values(rsvpResponses);
+            const selectedResponse = rsvpResponses[currentRsvpKey];
+            document.getElementById('rsvpAttendingCount').textContent = String(answers.filter(answer => answer === 'yes').length);
+            document.getElementById('rsvpDeclinedCount').textContent = String(answers.filter(answer => answer === 'no').length);
+
+            [['rsvpYes', 'yes'], ['rsvpNo', 'no']].forEach(([buttonId, answer]) => {
+                const button = document.getElementById(buttonId);
+                const isSelected = selectedResponse === answer;
+                button.classList.toggle('is-selected', isSelected);
+                button.setAttribute('aria-pressed', String(isSelected));
+            });
+        }
+
+        function saveRsvp(answer) {
+            const previousResponses = rsvpResponses;
+            rsvpResponses = { ...rsvpResponses, [currentRsvpKey]: answer };
+
+            try {
+                localStorage.setItem(rsvpStorageKey, JSON.stringify(rsvpResponses));
+                rsvpStatus.textContent = answer === 'yes'
+                    ? 'Konfirmasi hadir Anda berhasil dicatat di browser ini.'
+                    : 'Konfirmasi tidak hadir Anda berhasil dicatat di browser ini.';
+            } catch (error) {
+                console.error('Jawaban RSVP tidak dapat disimpan.', error);
+                rsvpResponses = previousResponses;
+                rsvpStatus.textContent = 'Jawaban RSVP tidak dapat disimpan. Penyimpanan browser mungkin penuh atau tidak tersedia.';
+            }
+
+            renderRsvp();
+        }
+
+        document.getElementById('rsvpYes').addEventListener('click', () => saveRsvp('yes'));
+        document.getElementById('rsvpNo').addEventListener('click', () => saveRsvp('no'));
+        renderRsvp();
 
         let generatedGuestLinks = [];
 
@@ -825,6 +931,13 @@
             autoScrollRemainder = 0;
         }
 
+        function resumeAutoScroll() {
+            if (!autoScrollEnabled) return;
+            autoScrollPausedUntil = 0;
+            lastAutoScrollTime = 0;
+            autoScrollRemainder = 0;
+        }
+
         function startAutoScroll() {
             if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
             autoScrollEnabled = true;
@@ -836,7 +949,11 @@
 
         window.addEventListener('wheel', pauseAutoScroll, { passive: true });
         window.addEventListener('touchstart', pauseAutoScroll, { passive: true });
+        window.addEventListener('touchend', resumeAutoScroll, { passive: true });
+        window.addEventListener('touchcancel', resumeAutoScroll, { passive: true });
         window.addEventListener('pointerdown', pauseAutoScroll, { passive: true });
+        window.addEventListener('pointerup', resumeAutoScroll, { passive: true });
+        window.addEventListener('pointercancel', resumeAutoScroll, { passive: true });
         window.addEventListener('keydown', event => {
             if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(event.key)) {
                 pauseAutoScroll();
