@@ -420,8 +420,8 @@
         .rsvp-button { min-height: 48px; padding: 10px 14px; border: 1px solid rgba(182, 166, 255, .4); border-radius: 7px; background: rgba(3, 7, 18, .32); color: var(--ink) !important; cursor: pointer; font-size: .9rem; font-weight: 600; transition: border-color .2s ease, background .2s ease, transform .2s ease; }
         .rsvp-button { display: grid; align-items: center; text-decoration: none; }
         .rsvp-button:hover { transform: translateY(-1px); border-color: var(--acid-green); background: rgba(74, 131, 255, .2); }
-        .event-photo { position: relative; height: 240px; margin-top: 14px; overflow: hidden; border: 1px solid rgba(182, 166, 255, .34); border-radius: 8px; background: var(--navy-deep); }
-        .event-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 42%; }
+        .event-photo { position: relative; margin-top: 14px; overflow: hidden; border: 1px solid rgba(182, 166, 255, .34); border-radius: 8px; background: var(--navy-deep); }
+        .event-photo img { display: block; width: 100%; height: auto; object-fit: contain; }
         .event-photo::after { position: absolute; inset: 30% 0 0; background: linear-gradient(180deg, transparent, rgba(7, 17, 33, .72)); content: ''; pointer-events: none; }
         .event-photo figcaption { position: absolute; right: 14px; bottom: 11px; left: 14px; z-index: 1; padding-left: 9px; border-left: 2px solid var(--acid-green); color: var(--ink) !important; font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
         .map-direction {
@@ -490,7 +490,7 @@
             .countdown-label { font-size: .54rem; }
             .rsvp-actions { gap: 7px; }
             .rsvp-button { padding-inline: 8px; font-size: .82rem; }
-            .event-photo { height: 210px; margin-top: 11px; }
+            .event-photo { margin-top: 11px; }
             .map-direction { min-height: 68px; margin-top: 11px; padding: 10px 12px; }
         }
 
@@ -498,7 +498,7 @@
             .screen-panel { padding-top: 16px; padding-bottom: 16px; }
             .portrait { width: 112px; height: 136px; }
             .event-item { min-height: 130px; }
-            .event-photo { height: 160px; margin-top: 8px; }
+            .event-photo { margin-top: 8px; }
             .map-direction { min-height: 62px; }
             .cover-copy { min-height: 0; }
             .cover-content { padding-top: 10px; padding-bottom: 10px; }
